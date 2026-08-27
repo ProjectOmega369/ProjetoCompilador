@@ -1,0 +1,165 @@
+# O núcleo mínimo de operadores e as reduções
+
+Decisão do segundo arco da Linguagem Musical. A balança de inclusão no núcleo priorizou a inclusão de operadores e folhas irredutíveis e/ou conceituais de forma que .
+
+## O núcleo
+
+Três operadores e três folhas.
+
+| Construção     | Papel                                            |
+| -------------- | ------------------------------------------------ |
+| concatenação   | núcleo — uma coisa seguida de outra              |
+| alternância    | núcleo — uma coisa ou outra                      |
+| fecho          | núcleo — zero ou mais repetições                 |
+| símbolo        | folha — um símbolo literal do alfabeto           |
+| cadeia vazia   | folha — produzida pela redução (alternância entre caráter terminal e cadeia vazia) do opcional       |
+| linguagem vazia   | folha — conceitual, a não aceitação de cadeia alguma       |
+
+Tudo o mais que o usuário pode escrever é reduzido a isto durante a leitura.
+Consequência direta, e a razão de a decisão valer o documento: a construção de
+Thompson, a determinação e a minimização tratarão **três** casos internos, e
+não oito. Cada operador mantido no núcleo reapareceu em cada uma dessas peças.
+
+## As reduções, em pares
+
+O usuário escreve	A árvore recebe
+x+	concat(x, fecho(x))
+x?	alt(x, ε)
+x{n}	concatenação de n cópias de x
+x{n,}	concatenação de n cópias de x seguida de fecho(x)
+x{n,m}	n cópias de x seguidas de m-n opcionais, cada um reduzido a alt(x, ε)
+[abc]	alt(alt('a', 'b'), 'c')
+[a-c]	alt(alt('a', 'b'), 'c')
+[a-z]	alternância dos símbolos de a até z
+.	alternância de todos os símbolos de Σ
+(x)	x
+\.	'.' — símbolo literal
+\*	'*' — símbolo literal
+\+	'+' — símbolo literal
+\?	'?' — símbolo literal
+|	`'
+\(	'(' — símbolo literal
+\)	')' — símbolo literal
+
+
+A redução de `x+` duplica a subárvore `x`. Não compartilhamos o índice entre as
+duas ocorrências: compartilhar produziria um grafo, e a construção de Thompson
+passaria duas vezes pelos mesmos estados, gerando uma máquina errada. O preço é
+que o custo de `x+` é o dobro do de `x`, mais um nó — e a demonstração mede isso.
+
+## Tratamento do caso ‘.’
+
+Coringa ‘.’: aceito na linguagem de entrada, mas reduzido para uma alternância sobre todos os símbolos de Σ. 
+
+## Descartados
+ 
+Retrovisor e grupo de captura, já recusados no arco anterior: retrovisor sai
+da classe das linguagens regulares, e um pattern que o usasse não poderia ser
+compilado para autômato finito.
+
+Lookahead / lookbehind, essas construções não são necessárias para o modelo de expressões regulares adotado e algumas formas não podem ser representadas pelo núcleo sem mecanismos adicionais. 
+
+// 02_regex.h — Leitura de uma expressão da Linguagem Musical e conversão em árvore.
+//
+// Recebe o texto de um pattern musical 
+// que utilizarão o alfabeto para formar os tipos léxicos
+// e devolve a árvore já reduzida ao
+// núcleo mínimo. Nenhuma peça posterior precisa conhecer a notação de
+// conveniência utilizada pelo usuário.
+//
+// O núcleo contém três operadores:
+//   - concatenação;
+//   - alternância;
+//   - fecho.
+//
+// E três folhas:
+//   - símbolo;
+//   - cadeia vazia (ε);
+//   - linguagem vazia (∅).
+//
+// O coringa `.` é aceito na entrada, mas é reduzido durante a leitura para
+// uma alternância contendo todos os símbolos do alfabeto musical Σ.
+//
+// A árvore não contém nós para `+`, `?`, classes, agrupamentos ou coringa.
+// Essas construções desaparecem durante a análise.
+
+#ifndef LINGUAGEM_MUSICAL_02_REGEX_H
+#define LINGUAGEM_MUSICAL_02_REGEX_H
+
+#include <cstddef>
+#include <string>
+#include <vector>
+
+namespace linguagem_musical {
+.
+inline constexpr std::size_t kSemFilho =
+    static_cast<std::size_t>(-1);
+
+// -----------------------------------------------------------------------------
+// Núcleo mínimo
+// -----------------------------------------------------------------------------
+
+enum class TipoDeNo {
+    Simbolo,        // folha: símbolo literal do alfabeto musical
+    CadeiaVazia,    // folha: ε
+    LinguagemVazia, // folha: ∅
+
+    Concatenacao,   // operador: AB
+    Alternancia,    // operador: A|B
+    Fecho,          // operador: A*
+};
+
+struct No {
+    TipoDeNo tipo = TipoDeNo::CadeiaVazia;
+
+    // Significativo somente quando tipo == Simbolo.
+    char simbolo = '\0';
+
+    // Concatenacao e Alternancia usam os dois.
+    // Fecho usa somente esquerda.
+    std::size_t esquerda = kSemFilho;
+    std::size_t direita = kSemFilho;
+};
+
+struct Arvore {
+    std::vector<No> nos;
+    std::size_t raiz = kSemFilho;
+
+    bool vazia() const;
+};
+
+
+
+struct ErroDeSintaxe {
+    std::size_t posicao = 0;
+    std::string mensagem;
+};
+
+struct Resultado {
+    bool ok = false;
+    Arvore arvore;
+    ErroDeSintaxe erro;
+};
+
+// -----------------------------------------------------------------------------
+// Interface
+// -----------------------------------------------------------------------------
+
+// Lê a expressão musical e devolve a árvore reduzida ao núcleo,
+// ou o primeiro erro encontrado.
+Resultado analisarExpressao(const std::string& expressao);
+
+// Forma prefixa canônica da árvore.
+std::string formatarArvore(const Arvore& arvore);
+
+// Formata o erro para apresentação ao usuário.
+std::string formatarErro(
+    const std::string& expressao,
+    const ErroDeSintaxe& erro);
+
+// Número de nós da árvore.
+std::size_t tamanho(const Arvore& arvore);
+
+}  // namespace linguagem_musical
+
+#endif  // LINGUAGEM_MUSICAL_02_REGEX_H
