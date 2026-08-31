@@ -1,23 +1,41 @@
-Classes Lexicais da Linguagem:
+Classes Lexicais da Linguagem
 
-* Identificador 
+Apenas as formas que o analisador reconhece caractere a caractere (tokens). Para
+palavras reservadas (Ritmo, Timbre, Espera, Nota, Amplificar, Efeito), a classe léxica
+é só o token em si — o que cada uma *faz* na linguagem está descrito na seção
+"Construções da linguagem", abaixo, e não aqui.
 
-* Inteiro (int) - define variáveis numéricas ou do tipo inteiro.
+* Identificador — sequência de letras, dígitos e `_`, começando por letra.
 
-* String (str) - define variáveis do tipo texto. 
+* Inteiro (int) — sequência de dígitos; define variáveis numéricas do tipo inteiro.
 
-* Float (f)- define variáveis numericas com ponto flutuante ou casa decimal.
+* String (str) — sequência de caracteres entre aspas; define variáveis do tipo texto.
 
-* Booleano (bool) - define variáveis que contenham valores booleanos, que podem ser verdadeiro ou falso.
+* Float (f) — dígitos com ponto decimal; define variáveis numéricas com casa decimal.
 
-* Ritmo (bpm) - unidade de medida para definir a velocidade da música 
+* Booleano (bool) — palavra reservada `true` ou `false`.
 
-* Timbre (@) - Origem do som ou instrumento que será utilizado.  
+* Ritmo (bpm) — palavra reservada `bpm`; introduz a unidade de medida de velocidade da música.
 
-* Espera (wait) - unidade de medida para definir o tempo para ser esperado.
+* Timbre (@) — símbolo reservado `@`; introduz a origem do som (instrumento) a ser usado.
 
-* Amplificar (amp) -  função para alterar a altura do som em decibéis. 
+* Espera (wait) — palavra reservada `wait`; introduz a unidade de tempo a ser esperado.
 
-* Nota (!) - objeto composto por 3 parâmetros para descrever uma nota musical. 
+* Nota (!) — símbolo reservado `!`; introduz a declaração de uma nota musical.
 
-* Efeito (fx) - objeto responsavel por adicionar um efeito em uma música. 
+* Amplificar (amp) — palavra reservada `amp`; introduz uma chamada de amplificação.
+
+* Efeito (fx) — palavra reservada `fx`; introduz a declaração de um efeito.
+
+## Construções da linguagem (nível sintático/semântico, não léxico)
+
+Estas não são classes léxicas — são o que o parser monta a partir dos tokens acima.
+
+* **Nota** — objeto composto por 3 parâmetros (nota, oitava, duração), introduzido pelo
+  token `!`.
+
+* **Amplificar** — função que altera a altura do som em decibéis, invocada pelo token
+  `amp`.
+
+* **Efeito** — objeto responsável por adicionar um efeito a uma música, introduzido pelo
+  token `fx`.
