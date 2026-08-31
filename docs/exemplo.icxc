@@ -1,1 +1,31 @@
+// exemplo.icxc — exemplo canônico da Linguagem Musical (Tarefa 2, Módulo 1)
+// (proposta — confirmar sintaxe exata com o grupo; ilustra a decisão registrada
+// em 01_recorte.md: "Que forma tem a descrição escrita pelo usuário")
+
+// ---------- ENTRADA (programa do usuário) ----------
+
+bpm ritmo = 120
+@ instrumento = "piano"
+
+! nota1(C, 4, seminima)
+! nota2(E, 4, colcheia)
+! nota3(G, 4, colcheia)
+
+fx reverb(nota3, 0.3)
+amp(nota1, +3)
+
+wait 500
+
+// ---------- RESULTADO ESPERADO (saída de Nível 1) ----------
+// Lista ordenada de eventos, no formato decidido em 01_recorte.md
+// ("O que o sistema produz"): instrumento, nota, oitava, duração,
+// efeitos/volume quando presentes; BPM global registrado à parte.
+
+// ritmo: 120 bpm
+// instrumento: piano
+//
+// evento 1 -> nota: C, oitava: 4, duracao: seminima, volume: +3db
+// evento 2 -> nota: E, oitava: 4, duracao: colcheia
+// evento 3 -> nota: G, oitava: 4, duracao: colcheia, efeito: reverb(0.3)
+// espera: 500ms após o evento 3
 
