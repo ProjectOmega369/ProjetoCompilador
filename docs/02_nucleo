@@ -1,6 +1,6 @@
 # O núcleo mínimo de operadores e as reduções
 
-Decisão do segundo arco da Linguagem Musical. A balança de inclusão no núcleo priorizou a inclusão de operadores e folhas irredutíveis e/ou conceituais de forma que .
+Decisão do segundo arco da Linguagem Musical. A balança de inclusão no núcleo priorizou a inclusão de operadores e folhas irredutíveis e/ou conceituais, de forma que nenhuma construção do núcleo pudesse ser expressa em termos de outra construção do núcleo.
 
 ## O núcleo
 
@@ -37,7 +37,7 @@ x{n,m}	n cópias de x seguidas de m-n opcionais, cada um reduzido a alt(x, ε)
 \*	'*' — símbolo literal
 \+	'+' — símbolo literal
 \?	'?' — símbolo literal
-|	`'
+\|	'|' — símbolo literal
 \(	'(' — símbolo literal
 \)	')' — símbolo literal
 
@@ -91,7 +91,7 @@ Lookahead / lookbehind, essas construções não são necessárias para o modelo
 #include <vector>
 
 namespace linguagem_musical {
-.
+
 inline constexpr std::size_t kSemFilho =
     static_cast<std::size_t>(-1);
 
