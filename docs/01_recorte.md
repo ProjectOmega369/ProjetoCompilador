@@ -13,35 +13,41 @@ seria a representação gráfica de partituras ou das notas da musica, importar 
 formato tem esse termo "8 bits" por usar os efeitos sonoros usando em jogos antigos feitos nesse formato. Outra funcionalidade descartada seria dá pessoa importar suas proprias amostras de sons de instrumento invés de amostras pré-prontas.
 
 ## Que classe de padrões que o sistema aceita.
-**Decisão** - expressões regulares aceitas com concatenação, alternância ("|"), fecho Kleene (*), fecho positivo (+),  opcional (?),      
-classe de caracteres ( [...]), classe negativa (^) ,coringa ('.') e agrupamento por parênteses.
-Definição de classes de objetos, definição de variáveis (de tipos primitivos, e próprios do sistema - como por exemplo de amostras de instrumentos ou efeitos sonoros), criação de     
+**Decisão** - Expressões regulares aceitas com concatenação, alternância ("|"), fecho Kleene (*), fecho positivo (+), opcional (?), classe de caracteres ([...]), classe negativa (^) e coringa ('.'), além de agrupamento por parênteses.
+Definição de classes de objetos, definição de variáveis (de tipos primitivos, e próprios do sistema — como por exemplo de amostras de instrumentos ou efeitos sonoros), e criação de funções que descrevem uma sequência musical (notas, blocos repetidos, aplicação de efeitos).    
 
 
-**Núcleo Mínimo** - concatenação, alternância e fecho. todas as outras quatro classes podem ser reduzidas ao núcleo
-um exemplo de fecho positivo: "a+" após a leitura vira "aa*", uma classe de caracteres '[cdf]' vira uma alternância '(a | b | c)';
+**Núcleo Mínimo** - Concatenação, alternância e fecho. Todas as outras quatro classes podem ser reduzidas ao núcleo:
+um exemplo de fecho positivo: "a+" após a leitura vira "aa*"; uma classe de caracteres '[cdf]' vira uma alternância '(c | d | f)'.
 
 
-**Descartado** - 
+**Descartado** - Retrovisor (backreference) e grupo de captura: saem da classe das linguagens regulares, e um padrão que os usasse não poderia ser compilado para autômato finito. Lookahead / lookbehind: não são necessários para o modelo de expressões regulares adotado, e algumas formas não podem ser representadas pelo núcleo sem mecanismos adicionais.
 
 ## Que forma tem a descrição escrita pelo usuário.
 
-**Decisão** - Um programa é uma sequência de declarações contendo 'Variables', 'classes', ''.
+**Decisão** - Um programa é uma sequência de declarações: declarações de variáveis (tipos primitivos — int, str, f, bool — e tipos próprios do sistema — Nota, Efeito, Timbre), seguida de comandos que descrevem a composição musical (notas com oitava e duração, aplicação de efeito, definição de BPM e instrumento).
 
-**Núcleo Mínimo** - 
+**Núcleo Mínimo** - A declaração de variáveis e a sequência ordenada de comandos musicais (nota com oitava e duração, aplicação de efeito, definição de BPM) são obrigatórias.
 
-**Descartado** - 
+**Descartado** - Estruturas de controle condicional aninhadas e importação de módulos externos ficam fora do nível mínimo
 
 ## O que o sistema produz (Nivel 1).
-**Decisão** - 
+**Decisão** - A saída é uma representação estruturada da composição: uma lista ordenada de eventos musicais (instrumento, nota, oitava, duração, efeitos aplicados, BPM), pronta para ser interpretada por um player externo ou impressa como partitura textual. Síntese de áudio real (gerar um .wav) fica fora do nível 1.
 
-**Núcleo Mínimo** -
+**Núcleo Mínimo** - A lista ordenada de eventos, cada um com nota, oitava e duração, é obrigatória; efeito e timbre são anexados ao evento quando presentes no programa de entrada.
 
-**Descartado** - 
+**Descartado** - Geração de arquivo de áudio e renderização gráfica de partitura ficam fora do nível 1.
 
 --- Gramática Hospedeira (Linguagem que o usuário escreve) ---
+* program := declaration*;
+* declaration := type ID "=" value;
+* value := ("INTEGER" | "ID" | "STRING"| "BOOLEAN" | "FLOAT" | "NOTE" | "EFFECT" | "TIMBRE");
+* note         := "Nota" "(" NUMBER "," NUMBER ")" ;
+*effect       := "Efeito" "(" STRING ")" ;
+*timbre       := "Timbre" "(" STRING ")" ;
 * andExpr := cmpExpr("and" cmpExpr)*;
 * cmpExpr := ("!="|"=>"|"<="|"=="|"<"| ">");
+* type := ("int" | "str" | " bool" | "float"| "nota" | "efeito" | "timbre");
 * Primary := ID | NUMBER | STRING | "value" "("ID") | ("expr")";
 
 --- Mini Linguagem Regular (Alvo dos Automatos) ---
