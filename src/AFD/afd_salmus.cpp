@@ -1,23 +1,3 @@
-// afd_salmus.cpp
-//
-// Implementação de Autômatos Finitos Determinísticos (AFD) para as
-// classes léxicas da Linguagem Musical (Salmus), conforme documentado em
-// especificacao/padrao_arvore.md ("1. Tabela de peças").
-//
-// A classe AFD é a mesma estrutura Q / Σ / δ / q0 / F do exemplo base
-// (afd.cpp); o que muda são os autômatos concretos: em vez de um único
-// AFD binário de exemplo, aqui construímos um AFD por classe léxica:
-//
-//   1) Identificador       -> [a-zA-Z][a-zA-Z0-9_]*
-//   2) Numero inteiro      -> [0-9]+
-//   3) Numero com sinal    -> [+-]?[0-9]+
-//   4) Texto entre aspas   -> "[^"]*"
-//   5) Palavra fixa        -> bpm|wait|amp|fx
-//   6) Sinal               -> =|(|)
-//
-// O programa lê um arquivo texto (uma lexeme/token por linha) e informa,
-// para cada linha, qual(is) classe(s) léxica(s) da Salmus a reconhecem.
-
 #include <fstream>
 #include <iostream>
 #include <sstream>
@@ -129,9 +109,6 @@ public:
 };
 
 
-// =============================================================
-// FÁBRICAS DOS AFDs — uma por classe léxica de especificacao/padrao_arvore.md
-// =============================================================
 
 // 1) Identificador: [a-zA-Z][a-zA-Z0-9_]*
 AFD construirIdentificador() {
@@ -241,7 +218,6 @@ AFD construirTextoEntreAspas() {
 AFD construirPalavraFixa() {
     AFD afd;
 
-    // Um estado por prefixo já lido de cada palavra (uma "trie" determinística).
     const std::vector<std::string> estadosList = {
         "q0",
         "b", "bp", "bpm",
@@ -301,7 +277,7 @@ AFD construirSinal() {
 
 
 // =============================================================
-// LEITURA DO ARQUIVO — uma lexeme (token candidato) por linha
+// LEITURA DO ARQUIVO
 // =============================================================
 
 std::vector<std::string> lerLexemes(const std::string& nomeArquivo) {
@@ -337,9 +313,6 @@ int main(int argc, char* argv[]) {
 
     try {
 
-        // ==================================================
-        // CONSTRUÇÃO DOS AFDs (um por classe léxica da Salmus)
-        // ==================================================
 
         AFD afdIdentificador     = construirIdentificador();
         AFD afdInteiro           = construirInteiro();
@@ -348,23 +321,14 @@ int main(int argc, char* argv[]) {
         AFD afdPalavraFixa       = construirPalavraFixa();
         AFD afdSinal             = construirSinal();
 
-        // ==================================================
-        // LEITURA DO ARQUIVO (uma lexeme por linha)
-        // ==================================================
 
         const std::string nomeArquivo = (argc > 1) ? argv[1] : "fonte.lin";
 
         std::vector<std::string> lexemes = lerLexemes(nomeArquivo);
 
-        // ==================================================
-        // CLASSIFICAÇÃO LÉXICA
-        // ==================================================
 
         for (const std::string& lexeme : lexemes) {
 
-            // Prioridade de palavra reservada sobre identificador genérico,
-            // como em qualquer analisador léxico (maximal munch + reserved
-            // word check).
             std::string classe;
 
             if (afdPalavraFixa.aceita(lexeme)) {
