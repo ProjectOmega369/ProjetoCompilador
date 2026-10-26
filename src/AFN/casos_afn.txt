@@ -1,0 +1,290 @@
+# casos_afn.txt — bateria de 04_afn_teste.
+# Formato: padrão<TAB>cadeia<TAB>aceita|rejeita  (cadeia vazia = dois TABs seguidos)
+# Linhas em branco e linhas iniciadas por '#' são ignoradas.
+# Vereditos determinados à mão, sem rodar o programa.
+
+# símbolo e concatenação
+a	a	aceita
+a		rejeita
+a	b	rejeita
+a	aa	rejeita
+abc	abc	aceita
+abc	ab	rejeita
+abc	abcd	rejeita
+abc	acb	rejeita
+
+# alternância
+a|b	a	aceita
+a|b	b	aceita
+a|b		rejeita
+a|b	ab	rejeita
+ab|cd	cd	aceita
+ab|cd	ad	rejeita
+ab|cd	abcd	rejeita
+a|b|c	c	aceita
+a|b|c	d	rejeita
+
+# fecho
+a*		aceita
+a*	a	aceita
+a*	aaaa	aceita
+a*	b	rejeita
+a*	ab	rejeita
+(ab)*		aceita
+(ab)*	ab	aceita
+(ab)*	abab	aceita
+(ab)*	aba	rejeita
+(ab)*	ba	rejeita
+a*b	b	aceita
+a*b	aab	aceita
+a*b		rejeita
+a*b	a	rejeita
+a*b	abb	rejeita
+(a|b)*		aceita
+(a|b)*	ba	aceita
+(a|b)*	abba	aceita
+(a|b)*	abc	rejeita
+(a*b*)*		aceita
+(a*b*)*	ba	aceita
+(a*b*)*	abab	aceita
+(a*b*)*	c	rejeita
+(a*)*		aceita
+(a*)*	aaa	aceita
+(a*)*	b	rejeita
+(a?)*		aceita
+(a?)*	aaa	aceita
+(a?)*	b	rejeita
+
+# opcional
+a?		aceita
+a?	a	aceita
+a?	aa	rejeita
+a?	b	rejeita
+ab?	a	aceita
+ab?	ab	aceita
+ab?	abb	rejeita
+ab?	b	rejeita
+ab?		rejeita
+(ab)?		aceita
+(ab)?	ab	aceita
+(ab)?	a	rejeita
+a?b?		aceita
+a?b?	a	aceita
+a?b?	b	aceita
+a?b?	ab	aceita
+a?b?	ba	rejeita
+a?b?	aa	rejeita
+
+# fecho positivo
+a+		rejeita
+a+	a	aceita
+a+	aaa	aceita
+a+	b	rejeita
+a+	ab	rejeita
+(ab)+	ab	aceita
+(ab)+	abab	aceita
+(ab)+		rejeita
+(ab)+	aba	rejeita
+(a|b)+c	ac	aceita
+(a|b)+c	bac	aceita
+(a|b)+c	c	rejeita
+(a|b)+c	abx	rejeita
+
+# classes de caracteres
+[abc]	b	aceita
+[abc]	d	rejeita
+[abc]		rejeita
+[abc]	ab	rejeita
+[a-c]	a	aceita
+[a-c]	c	aceita
+[a-c]	d	rejeita
+[a-cx]	x	aceita
+[a-cx]	d	rejeita
+[+-]	+	aceita
+[+-]	-	aceita
+[+-]	*	rejeita
+[-a]	-	aceita
+[-a]	a	aceita
+[-a]	b	rejeita
+[a\-c]	-	aceita
+[a\-c]	a	aceita
+[a\-c]	c	aceita
+[a\-c]	b	rejeita
+[\]]	]	aceita
+[\]]	[	rejeita
+[a-z0-9_]	_	aceita
+[a-z0-9_]	m	aceita
+[a-z0-9_]	5	aceita
+[a-z0-9_]	Z	rejeita
+
+# classes negadas (complemento em Σ de especificacao/alfabeto.md)
+[^a]	b	aceita
+[^a]	5	aceita
+[^a]	a	rejeita
+[^a]		rejeita
+[^a]	bc	rejeita
+[^0-9]	a	aceita
+[^0-9]	5	rejeita
+[^"]	x	aceita
+[^"]	"	rejeita
+
+# coringa (alternância sobre Σ)
+.	a	aceita
+.	7	aceita
+.	=	aceita
+.		rejeita
+.	ab	rejeita
+a.c	abc	aceita
+a.c	a5c	aceita
+a.c	ac	rejeita
+a.c	abbc	rejeita
+.*		aceita
+.*	abc123	aceita
+
+# escapes
+\.	.	aceita
+\.	a	rejeita
+\*	*	aceita
+\*		rejeita
+\*	a	rejeita
+a\+b	a+b	aceita
+a\+b	ab	rejeita
+a\+b	aab	rejeita
+\(a\)	(a)	aceita
+\(a\)	a	rejeita
+\|	|	aceita
+\|		rejeita
+\\	\	aceita
+\\		rejeita
+
+# agrupamento
+(a|b)c	ac	aceita
+(a|b)c	bc	aceita
+(a|b)c	c	rejeita
+(a|b)c	abc	rejeita
+a(b|c)*d	ad	aceita
+a(b|c)*d	abcbd	aceita
+a(b|c)*d	abxd	rejeita
+a(b|c)*d	abc	rejeita
+((a))	a	aceita
+((a))		rejeita
+(a(b(c)))d	abcd	aceita
+(a(b(c)))d	abd	rejeita
+
+# quantificadores {n}, {n,}, {n,m}
+a{3}	aaa	aceita
+a{3}	aa	rejeita
+a{3}	aaaa	rejeita
+a{3}		rejeita
+a{0}		aceita
+a{0}	a	rejeita
+a{1}	a	aceita
+a{1}		rejeita
+a{1}	aa	rejeita
+a{2,}	a	rejeita
+a{2,}	aa	aceita
+a{2,}	aaaaa	aceita
+a{2,}		rejeita
+a{0,}		aceita
+a{0,}	aaa	aceita
+a{0,}	b	rejeita
+a{2,4}	a	rejeita
+a{2,4}	aa	aceita
+a{2,4}	aaa	aceita
+a{2,4}	aaaa	aceita
+a{2,4}	aaaaa	rejeita
+a{0,2}		aceita
+a{0,2}	aa	aceita
+a{0,2}	aaa	rejeita
+(ab){2}	abab	aceita
+(ab){2}	ab	rejeita
+(ab){2}	ababab	rejeita
+[0-9]{3}	120	aceita
+[0-9]{3}	12	rejeita
+[0-9]{3}	1234	rejeita
+[0-9]{3}	12a	rejeita
+
+# classe léxica: Identificador  [a-z][a-z0-9_]*
+[a-z][a-z0-9_]*	instrumento	aceita
+[a-z][a-z0-9_]*	nota1	aceita
+[a-z][a-z0-9_]*	a	aceita
+[a-z][a-z0-9_]*	nome_2	aceita
+[a-z][a-z0-9_]*	bpm	aceita
+[a-z][a-z0-9_]*	1nome	rejeita
+[a-z][a-z0-9_]*		rejeita
+[a-z][a-z0-9_]*	Nome	rejeita
+[a-z][a-z0-9_]*	nome-x	rejeita
+[a-z][a-z0-9_]*	_x	rejeita
+
+# classe léxica: Número inteiro  [0-9]+
+[0-9]+	120	aceita
+[0-9]+	0	aceita
+[0-9]+	007	aceita
+[0-9]+		rejeita
+[0-9]+	12a	rejeita
+[0-9]+	-5	rejeita
+[0-9][0-9]*	120	aceita
+[0-9][0-9]*		rejeita
+
+# classe léxica: Número com sinal  [+-]?[0-9]+
+[+-]?[0-9]+	+3	aceita
+[+-]?[0-9]+	-45	aceita
+[+-]?[0-9]+	120	aceita
+[+-]?[0-9]+	+	rejeita
+[+-]?[0-9]+	-	rejeita
+[+-]?[0-9]+		rejeita
+[+-]?[0-9]+	+-3	rejeita
+[+-]?[0-9]+	3+	rejeita
+[+-]?[0-9]+	--3	rejeita
+
+# classe léxica: Texto entre aspas  "[^"]*"
+"[^"]*"	"piano"	aceita
+"[^"]*"	""	aceita
+"[^"]*"	"abc	rejeita
+"[^"]*"	abc"	rejeita
+"[^"]*"	"a"b"	rejeita
+"[^"]*"	piano	rejeita
+"[^"]*"	"	rejeita
+"[^"]*"		rejeita
+
+# classe léxica: Palavra fixa  bpm|wait|amp|fx
+bpm|wait|amp|fx	bpm	aceita
+bpm|wait|amp|fx	wait	aceita
+bpm|wait|amp|fx	amp	aceita
+bpm|wait|amp|fx	fx	aceita
+bpm|wait|amp|fx	wai	rejeita
+bpm|wait|amp|fx	waitt	rejeita
+bpm|wait|amp|fx	bp	rejeita
+bpm|wait|amp|fx	ampfx	rejeita
+bpm|wait|amp|fx	f	rejeita
+bpm|wait|amp|fx		rejeita
+
+# classe léxica: Sinal  =|(|)
+=|\(|\)	=	aceita
+=|\(|\)	(	aceita
+=|\(|\)	)	aceita
+=|\(|\)		rejeita
+=|\(|\)	=(	rejeita
+=|\(|\)	a	rejeita
+
+# requisito do BPM: de 20 a 300  (padrao_arvore.md, seção 5)
+[2-9][0-9]|1[0-9][0-9]|2[0-9][0-9]|300	20	aceita
+[2-9][0-9]|1[0-9][0-9]|2[0-9][0-9]|300	30	aceita
+[2-9][0-9]|1[0-9][0-9]|2[0-9][0-9]|300	99	aceita
+[2-9][0-9]|1[0-9][0-9]|2[0-9][0-9]|300	100	aceita
+[2-9][0-9]|1[0-9][0-9]|2[0-9][0-9]|300	120	aceita
+[2-9][0-9]|1[0-9][0-9]|2[0-9][0-9]|300	199	aceita
+[2-9][0-9]|1[0-9][0-9]|2[0-9][0-9]|300	200	aceita
+[2-9][0-9]|1[0-9][0-9]|2[0-9][0-9]|300	250	aceita
+[2-9][0-9]|1[0-9][0-9]|2[0-9][0-9]|300	299	aceita
+[2-9][0-9]|1[0-9][0-9]|2[0-9][0-9]|300	300	aceita
+[2-9][0-9]|1[0-9][0-9]|2[0-9][0-9]|300	19	rejeita
+[2-9][0-9]|1[0-9][0-9]|2[0-9][0-9]|300	10	rejeita
+[2-9][0-9]|1[0-9][0-9]|2[0-9][0-9]|300	5	rejeita
+[2-9][0-9]|1[0-9][0-9]|2[0-9][0-9]|300	0	rejeita
+[2-9][0-9]|1[0-9][0-9]|2[0-9][0-9]|300		rejeita
+[2-9][0-9]|1[0-9][0-9]|2[0-9][0-9]|300	301	rejeita
+[2-9][0-9]|1[0-9][0-9]|2[0-9][0-9]|300	310	rejeita
+[2-9][0-9]|1[0-9][0-9]|2[0-9][0-9]|300	400	rejeita
+[2-9][0-9]|1[0-9][0-9]|2[0-9][0-9]|300	3000	rejeita
+[2-9][0-9]|1[0-9][0-9]|2[0-9][0-9]|300	019	rejeita
