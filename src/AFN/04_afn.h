@@ -136,9 +136,10 @@ struct ResultadoDaBateria {
 };
 
 // Lê os casos do arquivo, um por linha, no formato
-//     padrão <TAB> cadeia <TAB> aceita|rejeita
+//     padrão <TAB> cadeia <TAB> aceita|recusa
 // A cadeia pode ser vazia (dois TABs seguidos). Linhas em branco e linhas
-// iniciadas por '#' são ignoradas. Devolve lista vazia se o arquivo não abre.
+// iniciadas por '#' são ignoradas. "rejeita" é aceito como sinônimo de "recusa".
+// Devolve lista vazia se o arquivo não abre.
 // Uma linha malformada NÃO é descartada: vira um caso com erroDeLeitura, e
 // rodarBateria() a conta como falha — descartar em silêncio esconderia o caso.
 std::vector<CasoDeTeste> lerCasos(const std::string& caminho);
