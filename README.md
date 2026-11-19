@@ -1,4 +1,7 @@
-# Linguagem Musical (Salmus) — do padrão ao AFD mínimo
+# ProjetoCompilador
+este repositório será utilizado para armazenar o conteúdo, criações ou atividades desenvolvidas na matéria de compiladores e linguagem formal do 6 - termo de Ciências da Computação da UNIMAR.
+
+## Linguagem Musical (Salmus) — do padrão ao AFD mínimo
 
 ## Rodar os testes (Partes 1 e 2)
 
@@ -13,7 +16,7 @@ pode ser carregado no lugar do do compilador e dar segfault):
 mingw32-make test LDFLAGS=-static
 ```
 
-O comando compila e roda `04_afn_teste` e `05_afd_teste` sobre `casos_afn.txt`;
+O comando compila e roda `04_afn_teste` e `05_afd_teste` sobre `src/AFN/casos_afn.txt`;
 sai com código 0 se tudo passou. Resultado atual: 212/212 e 90/90 verificações.
 
 Demonstração (imprime estados antes/depois da minimização e a tabela de explosão):
@@ -27,16 +30,16 @@ make demo                                  # (a|b)*c e a tabela de explosão
 
 | Parte | Arquivos |
 |---|---|
-| Leitura do padrão → árvore do núcleo | `02_regex.h`, `02_regex.cpp` |
-| Construção de Thompson (6 casos: símbolo, ε, ∅, concatenação, alternância, fecho; `+ ? [] . {n,m}` já chegam reduzidos ao núcleo) | `04_afn.h`, `04_afn.cpp` (`construirThompson`) |
-| Fecho vazio, movimento por símbolo, simulação do AFN | `04_afn.cpp` (`Afn::fechoVazio`, `Afn::mover`, `Afn::simular`) |
-| Determinização (subconjuntos; guarda o conjunto do AFN de cada estado em `Afd::origem`) | `05_afd.h`, `05_afd.cpp` (`determinizar`) |
-| Minimização (completar, inacessíveis, partição inicial, refinamento até o ponto fixo) | `05_afd.cpp` (`completar`, `removerInacessiveis`, `minimizar`) |
-| Comparação das três máquinas (os três pares) | `05_afd.cpp` (`compararTres`) |
-| Testes da Parte 1 | `04_afn_teste.cpp`, `04_afn_fuzz.cpp` (diferencial contra `std::regex`) |
-| Testes da Parte 2 | `05_afd_teste.cpp` |
-| Bateria de casos conferidos à mão (padrão, cadeia, resposta) | `casos_afn.txt` (250 casos; usada pelas duas partes, nas três máquinas) |
-| Programa que imprime as contagens | `05_demo.cpp` |
+| Leitura do padrão → árvore do núcleo | `src/AFN/02_regex.h`, `src/AFN/02_regex.cpp` |
+| Construção de Thompson (6 casos: símbolo, ε, ∅, concatenação, alternância, fecho; `+ ? [] . {n,m}` já chegam reduzidos ao núcleo) | `src/AFN/04_afn.h`, `src/AFN/04_afn.cpp` (`construirThompson`) |
+| Fecho vazio, movimento por símbolo, simulação do AFN | `src/AFN/04_afn.cpp` (`Afn::fechoVazio`, `Afn::mover`, `Afn::simular`) |
+| Determinização (subconjuntos; guarda o conjunto do AFN de cada estado em `Afd::origem`) | `src/AFN/05_afd.h`, `src/AFN/05_afd.cpp` (`determinizar`) |
+| Minimização (completar, inacessíveis, partição inicial, refinamento até o ponto fixo) | `src/AFN/05_afd.cpp` (`completar`, `removerInacessiveis`, `minimizar`) |
+| Comparação das três máquinas (os três pares) | `src/AFN/05_afd.cpp` (`compararTres`) |
+| Testes da Parte 1 | `src/AFN/04_afn_teste.cpp`, `src/AFN/04_afn_fuzz.cpp` (diferencial contra `std::regex`) |
+| Testes da Parte 2 | `src/AFN/05_afd_teste.cpp` |
+| Bateria de casos conferidos à mão (padrão, cadeia, resposta) | `src/AFN/casos_afn.txt` (250 casos; usada pelas duas partes, nas três máquinas) |
+| Programa que imprime as contagens | `src/AFN/05_demo.cpp` |
 
 O conjunto vazio **é** um estado do AFD (o estado de erro), então a determinização
 já sai completa. `minimizar` ainda completa a entrada, para aceitar AFDs
